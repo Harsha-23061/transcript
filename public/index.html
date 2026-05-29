@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Telugu Audio Transcriber</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#667eea,#764ba2);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin:0;
+}
+
+.container{
+    background:white;
+    width:600px;
+    max-width:90%;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+h1{
+    text-align:center;
+    color:#333;
+}
+
+.upload-box{
+    border:2px dashed #764ba2;
+    padding:30px;
+    text-align:center;
+    border-radius:12px;
+    margin:20px 0;
+}
+
+button{
+    background:#764ba2;
+    color:white;
+    border:none;
+    padding:12px 25px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+button:hover{
+    opacity:.9;
+}
+
+#output{
+    margin-top:20px;
+    background:#f4f4f4;
+    padding:15px;
+    border-radius:10px;
+    white-space:pre-wrap;
+    min-height:150px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>🎤 Telugu Audio Transcriber</h1>
+
+    <div class="upload-box">
+        <input type="file" id="audioFile" accept="audio/*,video/*">
+    </div>
+
+    <button onclick="uploadAudio()">Generate Transcript</button>
+
+    <div id="output">
+        Transcript will appear here...
+    </div>
+</div>
+
+<script>
+async function uploadAudio() {
+
+    const file = document.getElementById("audioFile").files[0];
+
+    if(!file){
+        alert("Please select an audio file");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("audio", file);
+
+    document.getElementById("output").innerText =
+        "Transcribing Telugu audio...";
+
+    try{
+
+        const response = await fetch("/transcribe", {
+            method:"POST",
+            body:formData
+        });
+
+        const data = await response.json();
+
+        document.getElementById("output").innerText =
+            data.transcript;
+
+    }catch(err){
+
+        document.getElementById("output").innerText =
+            "Error: " + err.message;
+    }
+}
+</script>
+
+</body>
+</html>
